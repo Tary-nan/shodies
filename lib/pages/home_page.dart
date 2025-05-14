@@ -15,9 +15,16 @@ class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
 
   @override
-  Widget build(BuildContext context) {
-    // final productList = context.watch<Product>().products;
+  void initState() {
+    super.initState();
+    // appel une seule fois
+    Future.microtask(() {
+      context.read<Product>().fetchProducts();
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(

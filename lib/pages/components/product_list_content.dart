@@ -9,6 +9,7 @@ class ProductListContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productList = context.watch<Product>().products;
+    
 
     return Column(
       children: [
