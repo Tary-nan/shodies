@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shoedi/pages/components/product_favorite.dart';
+import 'package:shoedi/pages/components/product_list_content.dart';
 import 'package:shoedi/providers/product.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int currentPageIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    final productList = context.watch<Product>().products;
+    // final productList = context.watch<Product>().products;
 
     return Scaffold(
       body: SafeArea(
@@ -27,122 +35,68 @@ class HomePage extends StatelessWidget {
                   CircleAvatar(radius: 20),
                 ],
               ),
-              SizedBox(height: 20),
-              Expanded(
-                child: Container(
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                        ),
-                    itemCount: productList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return LayoutBuilder(
-                        builder: (context, constraint) {
-                          return GestureDetector(
-                            onTap: () {
-                              context.goNamed(
-                                'productDetail',
-                                pathParameters: {
-                                  'id': productList[index].id.toString(),
-                                },
-                              );
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: SizedBox(
-                                    height: constraint.minHeight * .5,
-                                    width: constraint.maxWidth,
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                          width: constraint.maxWidth,
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            color: Color(0xffefefef),
-                                          ),
-                                          child: Image.asset(
-                                            'images/${productList[index].image}',
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 10,
-                                          left: 10,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            child: IconButton(
-                                              onPressed: () {
-                                                context
-                                                    .read<Product>()
-                                                    .toogleFavorite(
-                                                      productList[index].id,
-                                                    );
-                                              },
-                                              icon: Icon(
-                                                productList[index].isFavorite
-                                                    ? Icons.favorite
-                                                    : Icons.favorite_border,
-                                                color:
-                                                    productList[index]
-                                                            .isFavorite
-                                                        ? Colors.red
-                                                        : Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 15),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      productList[index].title,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Men's Running Shoes",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Text(
-                                      "\$150",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+              SizedBox(height: 10),
+
+              TextField(
+                onChanged: (value) {
+                  context.read<Product>().searchProductByName(value);
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  prefixIcon: Icon(Icons.search),
+                  filled: true,
+                  fillColor: Colors.white,
+
+                  hintText: 'Search shoes',
                 ),
+              ),
+              SizedBox(height: 10),
+
+              // Container(
+              //   width: MediaQuery.of(context).size.width,
+              //   height: 120,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     color: Colors.white38,
+              //   ),
+              // ),
+              SizedBox(height: 10),
+              Expanded(
+                child:
+                    [
+                      ProductListContent(),
+                      ProductFavorite(),
+                      Container(),
+                    ][currentPageIndex],
               ),
             ],
           ),
         ),
+      ),
+
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.favorite_border_rounded)),
+            label: 'Favoris',
+          ),
+          NavigationDestination(
+            icon: Badge(label: Text('2'), child: Icon(Icons.messenger_sharp)),
+            label: 'Messages',
+          ),
+        ],
       ),
     );
   }
