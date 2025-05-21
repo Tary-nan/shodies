@@ -71,7 +71,7 @@ class ProductDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset('images/${product.image}'),
+            Image.asset('images/products/${product.image}'),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

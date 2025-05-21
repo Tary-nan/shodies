@@ -9,7 +9,6 @@ class ProductListContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productList = context.watch<Product>().products;
-    
 
     return Column(
       children: [
@@ -51,7 +50,7 @@ class ProductListContent extends StatelessWidget {
                                     color: Color(0xffefefef),
                                   ),
                                   child: Image.asset(
-                                    'images/${productList[index].image}',
+                                    'images/products/${productList[index].image}',
                                   ),
                                 ),
                                 Positioned(

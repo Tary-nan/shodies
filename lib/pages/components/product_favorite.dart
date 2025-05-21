@@ -22,7 +22,9 @@ class ProductFavorite extends StatelessWidget {
             );
           },
           leading: CircleAvatar(
-            backgroundImage: AssetImage('images/${productList[index].image}'),
+            backgroundImage: AssetImage(
+              'images/products/${productList[index].image}',
+            ),
           ),
           title: Text(productList[index].title),
           subtitle: Text(productList[index].miniDescription),
